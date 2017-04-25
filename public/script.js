@@ -14,6 +14,7 @@ function permutations(size) {
             // compute permutations of a list one size smaller
             var sublist = permutations(size - 1);
             var answer = [];
+
             sublist.forEach(function(permutation) {
                 // insert size in all possible positions in permutation
                 for (var i = 0; i < permutation.length + 1; i++) {
@@ -26,6 +27,7 @@ function permutations(size) {
                     );
                 }
             });
+
             // return the permutations
             return answer;
         }
@@ -66,28 +68,53 @@ $('#permute-in-main').on('click', function(event) {
  * When the calculate-in-web-worker button is clicked,
  * calculcate the permutations in a web worker.
  */
-$('#permutate-in-web-worker').on('click', function(event) {
+$('#permute-in-web-worker').on('click', function(event) {
     event.preventDefault();
 
     // Perform preparations
     $('#permutation-results').empty();
     $('#permutation-message').text("Calculating in web worker...");
 
-    // TODO: Calculate permutations using a web worker
+    // Calculate permutations using a web worker
+    var worker = new Worker('permutations.js');
+    worker.postMessage($('#n').val());
+    worker.onmessage = function(event) {
+        var permutations = event.data;
+
+        // Perform permutatations
+        permutations.forEach(function(perm) {
+            $('<li>').text(perm).appendTo('#permutation-results');
+        });
+
+        // Finish by clearing the processing message
+        $('#permutation-message').text('');
+    };
 })
 
 
-$('#image-chunk-list > img').on('click', function(event) {
+$('#image-list > img').on('click', function(event) {
     event.preventDefault();
+    var image = this; // added b/c we fall out of scope before we need it
+
     // Create a canvas the same size as the image
     var canvas = document.createElement('canvas');
     canvas.width = this.width;
     canvas.height = this.height;
+
     // Create a 2D context
     var ctx = canvas.getContext('2d');
+
     // Draw the image into it
     ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+
     // Get the image pixel data
-    var data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    // TODO: Process Data
+    var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+    // Process Data
+    var worker = new Worker("grayscale.js");
+    worker.postMessage(data, [data]); // zero-copy op (maybe) - needs to be cast to a buffer
+    worker.onmessage = function(event) {
+        ctx.putImageData(event.data, 0, 0);
+        image.src = canvas.toDataURL();
+    };
 })

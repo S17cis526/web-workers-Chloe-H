@@ -51,7 +51,14 @@ function handleRequest(req, res) {
         case '/script.js':
             serveFile('public/script.js', 'text/css', req, res);
             break;
-            // Serving image files
+        // Serve worker scripts
+        case '/permutations.js':
+            serveFile('public/permutations.js', 'text/javascript', req, res);
+            break;
+        case '/grayscale.js':
+            serveFile('public/grayscale.js', 'text/javascript', req, res);
+            break;
+        // Serving image files
         case '/images/ace.jpg':
             serveFile('images/ace.jpg', 'image/jpeg', req, res);
             break;
@@ -67,7 +74,7 @@ function handleRequest(req, res) {
         case '/images/mobile.jpg':
             serveFile('images/mobile.jpg', 'image/jpeg', req, res);
             break;
-            // Serve error code
+        // Serve error code
         default:
             res.statusCode = 404;
             res.end("Not found");
