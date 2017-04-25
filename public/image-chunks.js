@@ -3,8 +3,8 @@
  * @param {Buffer} data - the data to process
  */
 onmessage = function(data) {
-  // Process each pixel separately
-  for (var i = 0; i < l; i += 4) {
+    // Process each pixel separately
+    for (var i = 0; i < l; i += 4) {
         var r = data[i];
         var g = data[i + 1];
         var b = data[i + 2];
