@@ -9,9 +9,7 @@ function permutations(size) {
     if (size >= 0) { // Sanity check - we can't create negative permutations.
         if (size == 0) { // Base case for recursion
             // only 1 permuation for a 0-element array - an empty array
-            return [
-                []
-            ];
+            return [[]];
         } else { // Reduction case for recursion
             // compute permutations of a list one size smaller
             var sublist = permutations(size - 1);
